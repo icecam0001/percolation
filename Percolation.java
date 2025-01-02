@@ -1,0 +1,116 @@
+
+public class Percolation {
+    private int[] id;
+    private boolean[] open;
+    private int[] size; 
+    private int total;
+    
+    
+    public Percolation(int n){
+        int x = n*n+2;
+        this.id = new int[x];
+        this.size = new int[x];
+        this.open = new boolean[x];
+        this.total=n;
+        for (int i = 0; i<x+2; i++){
+            if (i<n+1){
+                this.id[i]=1;
+            } else if (i<x && i>=(n*n-1)){
+                this.id[i]=x;
+            } else{
+                this.id[i]=i;
+            }
+                
+
+            this.size[i]=1;
+            this.open[i]=false;
+        }
+    }
+        
+    // opens the site (row, col) if it is not open already
+    public void open(int row, int col) {
+        int index = row*total + col+1;
+        this.open[index] =true;
+        if (this.isOpen(row-1, col)){
+            union(row, col, row-1, col);
+        }
+        if (this.isOpen(row, col+1)){
+            union(row, col, row-1, col);
+        }
+        if (this.isOpen(row+1, col)){
+            union(row, col, row-1, col);
+        }
+        if (this.isOpen(row, col-1)){
+            union(row, col, row-1, col);
+        }
+        
+    }
+        
+
+    // is the site (row, col) open?
+    public boolean isOpen(int row, int col){
+        int iterate = (row-1)*total + col;
+        return this.open[iterate];
+    }
+        
+    // is the site (row, col) full?
+    public boolean isFull(int row, int col){
+        int index = (row-1)*total + col+1;
+        return !(this.open[index]);
+    }
+
+    // returns the number of open sites
+    public int numberOfOpenSites(){
+        int counter = 0;
+        for (int i = 1; i<(total*total+1); i++){
+            if (this.open[i]){
+                counter+=1;
+            }
+        }
+        return counter;
+    }
+
+    // does the system percolate?
+    public boolean percolates(){
+        if (root(1,0)==root(total+1,0)){
+            return true;
+        } 
+        return false;
+    }
+    //quick union-find with improvements and weighting to balance trees
+    public void union(int row, int col, int rowb, int colb){
+        int roota = root(row, col);
+        int rootb = root(rowb, colb);
+        if (this.size[roota] >= this.size[rootb]) {
+            this.id[rootb] = roota;
+            this.size[roota]+=this.size[rootb];
+        } 
+        else {
+            this.id[roota] = rootb;
+            this.size[rootb]+=this.size[roota];
+        }
+
+    }
+    //root with grandfather system to improve time complexity
+    public int root(int row, int col) {
+        int index = row*total + col;
+        int topoftree;
+        while (true) {
+            if (this.id[index] == index){
+                topoftree=index;
+                break;
+            } else{
+                this.id[index] = this.id[this.id[index]];
+                index = this.id[index];
+            }
+        }
+        return topoftree;
+    }
+
+    // test client (optional)
+    
+    public static void main(String[] args){
+
+    }
+}
+ 
