@@ -1,87 +1,38 @@
-# Percolation System Implementation
+# Percolation Assignment
 
-## Overview
-This project implements a percolation system simulator using weighted quick union-find with path compression. The system models a percolation process where sites in an n-by-n grid can be opened, and determines whether the system percolates (i.e., if there exists a path of open sites from top to bottom).
+## Project Structure
+This project consists of two Java classes that together simulate and analyze percolation systems:
 
-## Classes
+### 1. Percolation.java
+A class that creates an n-by-n grid and simulates a percolation system. Sites can be opened, and the system percolates when there is a path of open sites from the top to bottom.
 
-### Percolation
-The main class that implements the percolation system.
+Key Methods:
+- `Percolation(int n)` - Creates n-by-n grid with all sites blocked
+- `void open(int row, int col)` - Opens site at (row, col) if not already open
+- `boolean isOpen(int row, int col)` - Checks if site (row, col) is open
+- `boolean isFull(int row, int col)` - Checks if site (row, col) is full
+- `int numberOfOpenSites()` - Returns number of open sites
+- `boolean percolates()` - Checks if system percolates
 
-#### Key Features:
-- Uses weighted quick union-find data structure for efficient connectivity checks
-- Implements path compression ("grandfather") optimization for improved performance
-- Virtual top and bottom nodes for efficient percolation detection
-- O(log N) complexity for union operations
+Implementation Details:
+- Uses weighted quick union-find with path compression
+- Includes virtual top and bottom nodes for efficient percolation detection
+- Implements "grandfather" optimization in root finding
 
-#### Main Methods:
-- `open(row, col)`: Opens a site if it isn't already open
-- `isOpen(row, col)`: Checks if a site is open
-- `isFull(row, col)`: Checks if a site is full (connected to top)
-- `percolates()`: Checks if the system percolates
-- `numberOfOpenSites()`: Returns count of open sites
+### 2. PercolationStats.java
+A class that performs Monte Carlo simulation to estimate the percolation threshold.
 
-### PercolationStats
-A Monte Carlo simulation to estimate percolation threshold.
+Key Methods:
+- `PercolationStats(int n, int trials)` - Performs trials independent experiments on n-by-n grid
+- `double mean()` - Returns sample mean of percolation threshold
+- `double stddev()` - Returns sample standard deviation of percolation threshold
+- `double confidenceLo()` - Returns low endpoint of confidence interval
+- `double confidenceHi()` - Returns high endpoint of confidence interval
 
-#### Features:
-- Runs multiple trials to determine average percolation threshold
-- Calculates mean, standard deviation, and confidence intervals
-- Random site selection for unbiased sampling
-
-#### Statistical Methods:
-- `mean()`: Calculates average percolation threshold
-- `stddev()`: Computes standard deviation of thresholds
-- `confidenceLo()/confidenceHi()`: Calculates 95% confidence interval
-
-## Implementation Details
-
-### Data Structures
-- Main storage: Integer arrays for union-find (`id[]`)
-- Size tracking: Weighted implementation (`size[]`)
-- Site status: Boolean array (`open[]`)
-- Virtual nodes: Top (index 1) and bottom (index n²+1) for percolation detection
-
-### Optimizations
-1. Weighted Quick Union
-   - Keeps trees balanced by size
-   - Ensures O(log N) height
-   - Tracks subtree sizes for optimal merging
-
-2. Path Compression
-   - "Grandfather" linking during root finding
-   - Flattens trees incrementally
-   - Improves subsequent operations
-
-### Monte Carlo Simulation
-- Randomly opens sites until percolation occurs
-- Tracks ratio of open sites to total sites
-- Repeats for specified number of trials
-- Calculates statistical measures across trials
-
-## Usage
+## Usage Example
 ```java
-// Create n-by-n percolation system
-Percolation perc = new Percolation(n);
-
-// Open sites
-perc.open(row, col);
-
-// Check if system percolates
-boolean percolates = perc.percolates();
-
-// Run statistical trials
-PercolationStats stats = new PercolationStats(n, trials);
-double mean = stats.mean();
-double stddev = stats.stddev();
+// Run simulation
+PercolationStats stats = new PercolationStats(200, 100); // 200x200 grid, 100 trials
+System.out.println("Mean: " + stats.mean());
+System.out.println("95% confidence interval: [" + stats.confidenceLo() + ", " + stats.confidenceHi() + "]");
 ```
-
-## Performance
-- Union operations: O(log N)
-- Find operations: O(log N) amortized
-- Space complexity: O(N²)
-- Monte Carlo trials: O(N² log N) per trial
-
-## Dependencies
-- Java Standard Library
-- Random number generator for Monte Carlo simulation
