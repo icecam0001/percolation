@@ -8,8 +8,7 @@ public class PercolationStats {
         this.trials = trials;
         Percolation e = new Percolation(n);
         int max = n;
-        int randomspaces;
-        int total;
+    
         int randomCol = 1 + (int)(Math.random() * max); //1 added for minimum number of rows
         int randomRow = 1 + (int)(Math.random() * max);
         for (int i = 0; i<trials; i++){
@@ -17,9 +16,12 @@ public class PercolationStats {
             while(!(e.percolates())){
                 while (e.isOpen(randomRow, randomCol)) {
                     randomCol = 1 + (int)(Math.random() * max);
-                    randomRow = 1 + (int)(Math.random() * max)
+                    randomRow = 1 + (int)(Math.random() * max);
                 }
-                e.open(randomRow, randomCol);
+                if (!(e.percolates())){
+                    e.open(randomRow, randomCol);
+                }
+                
     
             }
             this.means[i] = ((double) e.numberOfOpenSites()/(n*n));
@@ -70,15 +72,7 @@ public class PercolationStats {
 
    // test client (see below)
    public static void main(String[] args){
-    
+
    }
 
-}       
-       
-        
-        
-        
-        //while percolation is false keep opening up random indexes between 1,1 and n,n
-        //check if its false
-        // then stop if it percolates and get the values
-    
+}   
