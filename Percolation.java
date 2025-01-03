@@ -8,7 +8,7 @@ public class Percolation {
     
     public Percolation(int n){
         if (n <= 0) {
-            throw new IllegalArgumentException("n must be greater than zero"); //Throw IllegalArgumentException if age is negative
+            throw new IllegalArgumentException("n must be greater than zero"); //Throw IllegalArgumentException if n is negative
         }
         int x = n*n+2;
         System.out.println("x = " + x);
