@@ -8,18 +8,19 @@ public class Percolation {
     
     public Percolation(int n){
         if (n <= 0) {
-            throw new IllegalArgumentException("n must be greater than zero"); //Throw IllegalArgumentException if n is negative
+            throw new IllegalArgumentException("n must be greater than zero"); //Throw IllegalArgumentException if age is negative
         }
         int x = n*n+2;
+        System.out.println("x = " + x);
         this.id = new int[x];
         this.size = new int[x];
         this.open = new boolean[x];
         this.total=n;
-        for (int i = 0; i<x+2; i++){
+        for (int i = 0; i<x; i++){
             if (i<n+1){
                 this.id[i]=1;
-            } else if (i<x && i>=(n*n-1)){
-                this.id[i]=x;
+            } else if (i<x && i>=(n*(n-1))){
+                this.id[i]=x-1;
             } else{
                 this.id[i]=i;
             }
@@ -28,6 +29,8 @@ public class Percolation {
             this.size[i]=1;
             this.open[i]=false;
         }
+        this.open[x-1] = true;
+        this.open[0] = true;
     }
         
     // opens the site (row, col) if it is not open already
@@ -35,18 +38,31 @@ public class Percolation {
         checkRowCol(row, col);
         int index = row*total + col+1;
         this.open[index] =true;
-        if (this.isOpen(row-1, col)){
-            union(row, col, row-1, col);
+        
+        if (!(row==1)){
+            if (this.isOpen(row-1, col)){
+                union(row, col, row-1, col);
+            }
         }
-        if (this.isOpen(row, col+1)){
-            union(row, col, row-1, col);
+        if (col<this.total){
+            if (this.isOpen(row, col+1)){
+                union(row, col, row, col+1);
+            }
         }
-        if (this.isOpen(row+1, col)){
-            union(row, col, row-1, col);
+        if (row<this.total) {
+            if (this.isOpen(row+1, col)){
+                union(row, col, row+1, col);
+            }
         }
-        if (this.isOpen(row, col-1)){
-            union(row, col, row-1, col);
+        
+
+        if (!(col==1)){
+            if (this.isOpen(row, col-1)){
+                union(row, col, row, col-1);
+            }
         }
+        
+        
         
     }
         
@@ -74,7 +90,7 @@ public class Percolation {
     public int numberOfOpenSites(){
         
         int counter = 0;
-        for (int i = 1; i<(total*total+1); i++){
+        for (int i = 1; i<=(total*total); i++){
             if (this.open[i]){
                 counter+=1;
             }
@@ -107,7 +123,7 @@ public class Percolation {
     }
     //root with grandfather system to improve time complexity
     public int root(int row, int col) {
-        checkRowCol(row, col);
+        
         int index = (row-1)*total + col;
         int topoftree;
         while (true) {
