@@ -7,6 +7,9 @@ public class Percolation {
     
     
     public Percolation(int n){
+        if (n <= 0) {
+            throw new IllegalArgumentException("n must be greater than zero"); //Throw IllegalArgumentException if age is negative
+        }
         int x = n*n+2;
         this.id = new int[x];
         this.size = new int[x];
@@ -29,6 +32,7 @@ public class Percolation {
         
     // opens the site (row, col) if it is not open already
     public void open(int row, int col) {
+        checkRowCol(row, col);
         int index = row*total + col+1;
         this.open[index] =true;
         if (this.isOpen(row-1, col)){
@@ -46,21 +50,29 @@ public class Percolation {
         
     }
         
-
+    public void checkRowCol(int row, int col) {
+        if (row <= 0 || row > this.total || col <= 0 || col > this.total){
+            throw new IllegalArgumentException("row/col indices out of bounds");
+        }
+            
+    }
     // is the site (row, col) open?
     public boolean isOpen(int row, int col){
+        checkRowCol(row, col);
         int iterate = (row-1)*total + col;
         return this.open[iterate];
     }
         
     // is the site (row, col) full?
     public boolean isFull(int row, int col){
+        checkRowCol(row, col);
         int index = (row-1)*total + col+1;
         return !(this.open[index]);
     }
 
     // returns the number of open sites
     public int numberOfOpenSites(){
+        
         int counter = 0;
         for (int i = 1; i<(total*total+1); i++){
             if (this.open[i]){
@@ -78,7 +90,9 @@ public class Percolation {
         return false;
     }
     //quick union-find with improvements and weighting to balance trees
-    public void union(int row, int col, int rowb, int colb){
+    private void union(int row, int col, int rowb, int colb){
+        checkRowCol(row, col);
+        checkRowCol(rowb, colb);
         int roota = root(row, col);
         int rootb = root(rowb, colb);
         if (this.size[roota] >= this.size[rootb]) {
@@ -93,7 +107,8 @@ public class Percolation {
     }
     //root with grandfather system to improve time complexity
     public int root(int row, int col) {
-        int index = row*total + col;
+        checkRowCol(row, col);
+        int index = (row-1)*total + col;
         int topoftree;
         while (true) {
             if (this.id[index] == index){
@@ -114,3 +129,4 @@ public class Percolation {
     }
 }
  
+
